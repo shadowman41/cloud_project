@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produit - E-Market</title>
+    <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+    <div class="top-bar">
+        <div class="container">🎉 Bienvenue sur E-Market ! Livraison gratuite dès 15 000 FCFA</div>
+    </div>
+    <header>
+        <div class="container">
+            <div class="main-nav">
+                <a href="index.html" class="logo">
+                    <img src="images/logo.jpeg" alt="E-Market" onerror="this.parentElement.innerHTML='<span style=\'font-size:24px;font-weight:800;color:var(--primary-color);\'>🛒 E-MARKET</span>'">
+                </a>
+                <ul class="nav-links">
+                    <li><a href="index.html">Accueil</a></li>
+                    <li><a href="e-market_homepage.html" class="active">Boutique</a></li>
+                    <li><a href="services.html">Services</a></li>
+                </ul>
+                <div class="search-container" style="max-width:300px;">
+                    <input type="text" id="searchInput" placeholder="Rechercher...">
+                    <button type="button" id="searchBtn">🔍</button>
+                </div>
+                <div class="nav-actions" id="navActions"></div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container" style="margin-top:30px;">
+        <div class="breadcrumb" id="breadcrumb">
+            <a href="index.html">Accueil</a><span class="sep">›</span>
+            <a href="e-market_homepage.html">Boutique</a><span class="sep">›</span> Chargement…
+        </div>
+        <div id="detailAlert"></div>
+        <div id="detailContainer">
+            <div class="loading-wrap"><div class="loader loader-lg"></div><p style="margin-top:10px;color:#666;">Chargement du produit…</p></div>
+        </div>
+
+        <section class="related-products" id="relatedSection" style="display:none;">
+            <h2>🔄 Produits similaires</h2>
+            <div class="products"><div class="products-grid" id="relatedGrid"></div></div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="copyright">&copy; 2026 E-Market. Tous droits réservés. Fait avec ❤️ au Sénégal 🇸🇳</div>
+        </div>
+    </footer>
+
+    <script src="assets/app.js"></script>
+    <script>
+        const slug = EMarket.qs('slug');
+        let _produit = null;
+        let _qty = 1;
+
+        async function loadProduit() {
+            const cont = document.getElementById('detailContainer');
+            if (!slug) {
+                cont.innerHTML = `<div class="empty-state"><div class="icon">❓</div><h3>Produit introuvable</h3><a href="e-market_homepage.html" class="btn">Retour à la boutique</a></div>`;
+                return;
+            }
+            try {
+                const r = await EMarket.request(`/produits/slug/${slug}`, { auth: false });
+                const p = r.produit;
+                _produit = p;
+                const prix = p.prix_promo || p.prix;
+                const remise = p.prix_promo ? Math.round((1 - p.prix_promo / p.prix) * 100) : 0;
+                const img = p.image_principale ? `images/${p.image_principale.split('/').pop()}` : 'images/Electro.webp';
+
+                document.getElementById('breadcrumb').innerHTML = `
+                    <a href="index.html">Accueil</a><span class="sep">›</span>
+                    <a href="e-market_homepage.html">Boutique</a><span class="sep">›</span>
+                    <a href="e-market_homepage.html?categorie=${p.categorie_slug}">${p.categorie_nom}</a>
+                    ${p.sous_categorie_nom ? `<span class="sep">›</span> <span>${p.sous_categorie_nom}</span>` : ''}
+                    <span class="sep">›</span> <strong>${p.nom}</strong>`;
+
+                const stockClass = p.stock > 20 ? 'stock-ok' : p.stock > 0 ? 'stock-faible' : 'stock-ko';
+                const stockText = p.stock > 20 ? `En stock (${p.stock})` : p.stock > 0 ? `Stock limité (${p.stock})` : 'Rupture de stock';
+
+                const reviewsHtml = r.avis?.length ? r.avis.map(a => `
+                    <div style="padding:16px 0;border-bottom:1px solid #eee;">
+                        <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+                            <strong style="color:var(--primary-color);">${[a.prenom, a.nom].filter(Boolean).join(' ') || 'Client'}</strong>
+                            <span style="font-size:12px;color:#888;">${new Date(a.date_creation).toLocaleDateString('fr-FR')}</span>
+                        </div>
+                        <div style="color:var(--accent-color);margin-bottom:6px;">${EMarket.fmtStars(a.note)}</div>
+                        ${a.titre ? `<strong>${a.titre}</strong><br>` : ''}
+                        <span style="color:#444;line-height:1.6;">${a.commentaire || ''}</span>
+                    </div>
+                `).join('') : `<p style="color:#888;">Aucun avis pour le moment. Soyez le premier à donner votre avis !</p>`;
+
+                cont.innerHTML = `
+                    <div class="product-detail">
+                        <div class="product-gallery">
+                            <div class="product-main-image">
+                                <img src="${img}" alt="${p.nom}" id="mainImg" onerror="this.src='images/Electro.webp'">
+                            </div>
+                            <div class="product-thumbs">
+                                <div class="active"><img src="${img}" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\\'font-size:30px;display:flex;align-items:center;justify-content:center;height:100%;\\'>📱</span>'"></div>
+                            </div>
+                        </div>
+                        <div class="product-details">
+                            <h1 id="pNom">${p.nom}</h1>
+                            <div class="stars-big">${EMarket.fmtStars(p.note_moyenne)} <span>(${p.nb_avis || 0} avis)</span></div>
+                            <div class="ref">Référence: EMK-P${p.id} • Marque: <strong>${p.marque || 'N/A'}</strong></div>
+
+                            <div class="prix-detail">
+                                <span class="now">${EMarket.fmtFCFA(prix)}</span>
+                                ${p.prix_promo ? `<span class="old">${EMarket.fmtFCFA(p.prix)}</span><span class="remise">-${remise}%</span>` : ''}
+                            </div>
+
+                            <div class="product-meta">
+                                <div><span class="label">Vendeur:</span> <span class="value">${p.est_verifie ? '✓ ' : ''}${p.nom_boutique}</span></div>
+                                <div><span class="label">Catégorie:</span> <span class="value">${p.categorie_nom}</span></div>
+                                <div><span class="label">Disponibilité:</span> <span class="${stockClass}">${stockText}</span></div>
+                                <div><span class="label">Vues:</span> <span class="value">${p.nb_vues || 0}</span></div>
+                                ${p.poids ? `<div><span class="label">Poids:</span> <span class="value">${p.poids} kg</span></div>` : ''}
+                                ${p.dimensions ? `<div><span class="label">Dimensions:</span> <span class="value">${p.dimensions}</span></div>` : ''}
+                            </div>
+
+                            <div class="qty-selector">
+                                <label>Quantité:</label>
+                                <div class="qty-input">
+                                    <button id="qMin">−</button>
+                                    <input type="text" value="1" id="qInput" readonly>
+                                    <button id="qPlus">+</button>
+                                </div>
+                                <span style="color:#888;font-size:13px;">(max ${p.stock || 1})</span>
+                            </div>
+
+                            <div class="action-buttons">
+                                <button class="btn btn-lg" id="addCartBtn" ${p.stock <= 0 ? 'disabled style=\\'opacity:0.5\\'' : ''}>🛒 Ajouter au panier</button>
+                                <button class="btn btn-secondary" id="favBtn">❤️ Favoris</button>
+                            </div>
+
+                            <div style="padding:14px;background:#f8f8f8;border-radius:8px;font-size:13px;">
+                                <div style="display:flex;gap:14px;flex-wrap:wrap;">
+                                    <span>🚚 Livraison 24h/48h</span>
+                                    <span>💸 Paiement à la livraison</span>
+                                    <span>✅ Retour gratuit 7 jours</span>
+                                </div>
+                            </div>
+
+                            <div class="product-description">
+                                <h3>📝 Description</h3>
+                                <p>${(p.description || p.description_courte || 'Aucune description disponible').replace(/\n/g, '<br>')}</p>
+                            </div>
+
+                            <div class="product-description">
+                                <h3>⭐ Avis clients (${p.nb_avis || 0})</h3>
+                                ${reviewsHtml}
+                                ${EMarket.user ? `
+                                <div style="margin-top:16px;padding:16px;background:#f8f8f8;border-radius:8px;">
+                                    <h4 style="margin-bottom:10px;color:var(--primary-color);">Donner votre avis</h4>
+                                    <div class="form-row">
+                                        <div class="form-group" style="flex:0 0 120px;">
+                                            <label>Note</label>
+                                            <select id="avisNote">
+                                                ${[5,4,3,2,1].map(n=>`<option value="${n}">${'⭐'.repeat(n)}</option>`).join('')}
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Titre</label>
+                                            <input type="text" id="avisTitre" placeholder="Résumé de votre avis">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Commentaire</label>
+                                        <textarea id="avisCom" rows="3" placeholder="Partagez votre expérience avec ce produit..."></textarea>
+                                    </div>
+                                    <button class="btn" id="submitAvis">Envoyer mon avis</button>
+                                </div>` : `<div style="margin-top:14px;padding:12px;background:var(--primary-light);border-radius:8px;font-size:14px;"><a href="connexion.html" style="color:var(--primary-color);font-weight:600;">Connectez-vous</a> pour laisser un avis.</div>`}
+                            </div>
+                        </div>
+                    </div>`;
+
+                document.getElementById('qMin').addEventListener('click', () => { _qty = Math.max(1, _qty - 1); document.getElementById('qInput').value = _qty; });
+                document.getElementById('qPlus').addEventListener('click', () => { const max = p.stock || 1; if (_qty < max) _qty++; document.getElementById('qInput').value = _qty; });
+
+                document.getElementById('addCartBtn').addEventListener('click', async () => {
+                    const ok = await EMarket.addToCart(p.id, _qty);
+                    if (ok) { const b = document.getElementById('addCartBtn'); const o = b.textContent; b.textContent = '✓ Ajouté !'; setTimeout(() => b.textContent = o, 1500); }
+                });
+
+                document.getElementById('favBtn').addEventListener('click', async () => {
+                    const fav = await EMarket.toggleFavori(p.id);
+                    if (fav === true) EMarket.toast('Ajouté aux favoris ❤️', 'success');
+                    else if (fav === false) EMarket.toast('Retiré des favoris', 'info');
+                });
+
+                document.getElementById('submitAvis')?.addEventListener('click', async () => {
+                    try {
+                        await EMarket.request(`/produits/${p.id}/avis`, {
+                            method: 'POST',
+                            body: { note: parseInt(document.getElementById('avisNote').value), titre: document.getElementById('avisTitre').value, commentaire: document.getElementById('avisCom').value }
+                        });
+                        EMarket.toast('Merci pour votre avis !', 'success');
+                        setTimeout(() => location.reload(), 800);
+                    } catch (e) { EMarket.toast(e.message, 'error'); }
+                });
+
+                if (r.similaires?.length) {
+                    document.getElementById('relatedSection').style.display = '';
+                    document.getElementById('relatedGrid').innerHTML = r.similaires.map(sp => EMarket.productCard(sp)).join('');
+                    EMarket.attachProductEvents(document.getElementById('relatedGrid'));
+                }
+            } catch (err) {
+                cont.innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><h3>${err.message}</h3><a href="e-market_homepage.html" class="btn">Retour à la boutique</a></div>`;
+            }
+        }
+
+        loadProduit();
+    </script>
+</body>
+</html>

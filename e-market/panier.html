@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon panier - E-Market</title>
+    <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+    <div class="top-bar">
+        <div class="container">🎉 Bienvenue sur E-Market ! Livraison gratuite dès 15 000 FCFA</div>
+    </div>
+    <header>
+        <div class="container">
+            <div class="main-nav">
+                <a href="index.html" class="logo">
+                    <img src="images/logo.jpeg" alt="E-Market" onerror="this.parentElement.innerHTML='<span style=\'font-size:24px;font-weight:800;color:var(--primary-color);\'>🛒 E-MARKET</span>'">
+                </a>
+                <ul class="nav-links">
+                    <li><a href="index.html">Accueil</a></li>
+                    <li><a href="e-market_homepage.html">Boutique</a></li>
+                    <li><a href="services.html">Services</a></li>
+                </ul>
+                <div class="search-container" style="max-width:300px;">
+                    <input type="text" id="searchInput" placeholder="Rechercher...">
+                    <button type="button" id="searchBtn">🔍</button>
+                </div>
+                <div class="nav-actions" id="navActions"></div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container" style="margin-top:30px;">
+        <div class="breadcrumb">
+            <a href="index.html">Accueil</a><span class="sep">›</span>
+            <a href="e-market_homepage.html">Boutique</a><span class="sep">›</span> Mon panier
+        </div>
+
+        <div class="div1">
+            <h1>🛒 Mon panier</h1>
+        </div>
+
+        <div id="panierAlert"></div>
+
+        <div class="cart-page" id="cartContainer">
+            <div class="loading-wrap" style="grid-column:1/-1;"><div class="loader loader-lg"></div><p style="margin-top:10px;color:#666;">Chargement du panier…</p></div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="copyright">&copy; 2026 E-Market. Tous droits réservés. Fait avec ❤️ au Sénégal 🇸🇳</div>
+        </div>
+    </footer>
+
+    <div class="modal-overlay" id="checkoutModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>🧾 Finaliser ma commande</h3>
+                <button class="modal-close" id="closeModal">×</button>
+            </div>
+            <div class="modal-body">
+                <div id="checkoutAlert"></div>
+                <div class="form-group">
+                    <label>Adresse de livraison *</label>
+                    <textarea id="addrLiv" rows="2" placeholder="Ex: Villa 12, Résidence Mermoz, Dakar"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Téléphone *</label>
+                        <input type="tel" id="telLiv" placeholder="+221 77 ...">
+                    </div>
+                    <div class="form-group">
+                        <label>Ville</label>
+                        <input type="text" id="villeLiv" placeholder="Dakar" value="Dakar">
+                    </div>
+                </div>
+                <label style="font-weight:500;margin-bottom:8px;display:block;">Mode de paiement</label>
+                <div class="payment-methods" id="paymentMethods">
+                    <div class="payment-method selected" data-m="paiement_livraison">
+                        <div class="icon">💵</div>
+                        <div class="label">Paiement à la livraison</div>
+                    </div>
+                    <div class="payment-method" data-m="orange_money">
+                        <div class="icon">🧡</div>
+                        <div class="label">Orange Money</div>
+                    </div>
+                    <div class="payment-method" data-m="wave">
+                        <div class="icon">💙</div>
+                        <div class="label">Wave</div>
+                    </div>
+                    <div class="payment-method" data-m="carte">
+                        <div class="icon">💳</div>
+                        <div class="label">Carte bancaire</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Note pour le vendeur / livreur</label>
+                    <textarea id="noteClient" rows="2" placeholder="Facultatif - précisions sur l'adresse, appel avant livraison..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelCheckout">Annuler</button>
+                <button class="btn btn-lg" id="confirmCheckout">Confirmer la commande</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/app.js"></script>
+    <script>
+        let _panier = null;
+        let _methodePaiement = 'paiement_livraison';
+
+        async function loadPanier() {
+            const cont = document.getElementById('cartContainer');
+            try {
+                if (!EMarket.token || !EMarket.user) {
+                    cont.innerHTML = `<div class="alert alert-info" style="grid-column:1/-1;">🔒 Vous devez être connecté pour gérer votre panier en ligne.</div>`;
+                    return;
+                }
+                const p = await EMarket.request('/panier');
+                _panier = p;
+                if (!p.articles?.length) {
+                    cont.innerHTML = `
+                        <div class="empty-state" style="grid-column:1/-1;">
+                            <div class="icon">🛒</div>
+                            <h3>Votre panier est vide</h3>
+                            <p>Découvrez nos produits et ajoutez ce que vous aimez !</p>
+                            <br>
+                            <a href="e-market_homepage.html" class="btn btn-lg">Commencer mes achats</a>
+                        </div>`;
+                    return;
+                }
+
+                const itemsHtml = p.articles.map(a => {
+                    if (!a.est_actif) return '';
+                    const img = a.image_principale ? `images/${a.image_principale.split('/').pop()}` : 'images/Electro.webp';
+                    return `
+                    <div class="cart-item" data-id="${a.id}">
+                        <a href="produit.html?slug=${a.slug}">
+                            <img src="${img}" alt="${a.nom}" onerror="this.src='images/Electro.webp'">
+                        </a>
+                        <div class="cart-item-details">
+                            <a href="produit.html?slug=${a.slug}"><h4>${a.nom}</h4></a>
+                            <div class="vendeur">Réf #${a.produit_id} • Stock dispo: ${a.stock}</div>
+                            <div class="prix">${EMarket.fmtFCFA(a.prix_courant)}</div>
+                        </div>
+                        <div class="cart-item-qty">
+                            <button class="qty-minus" data-id="${a.id}">−</button>
+                            <input type="number" value="${a.quantite}" min="1" max="${a.stock}" data-id="${a.id}">
+                            <button class="qty-plus" data-id="${a.id}">+</button>
+                        </div>
+                        <div style="text-align:right;min-width:110px;">
+                            <div style="font-weight:700;color:var(--primary-color);margin-bottom:8px;">${EMarket.fmtFCFA(a.sous_total)}</div>
+                            <button class="remove-btn" data-id="${a.id}">🗑️ Retirer</button>
+                        </div>
+                    </div>`;
+                }).join('');
+
+                const montantFree = p.montant_pour_free || 0;
+                const progress = Math.min(100, (p.sous_total / p.free_shipping_threshold) * 100);
+
+                const summaryHtml = `
+                    <div class="cart-summary">
+                        <h3>Récapitulatif</h3>
+                        ${montantFree > 0
+                            ? `<div class="free-shipping-info">Il manque <strong>${EMarket.fmtFCFA(montantFree)}</strong> pour la livraison gratuite !
+                                 <div class="progress-bar"><div class="progress-bar-fill" style="width:${progress}%"></div></div></div>`
+                            : `<div class="free-shipping-info" style="background:#d4edda;color:#155724;">🎉 Livraison GRATUITE !</div>`}
+                        <div class="summary-line"><span>Sous-total (${p.nb_articles} article${p.nb_articles>1?'s':''})</span><span>${EMarket.fmtFCFA(p.sous_total)}</span></div>
+                        <div class="summary-line"><span>TVA (18%)</span><span>${EMarket.fmtFCFA(p.tva)}</span></div>
+                        <div class="summary-line"><span>Frais de livraison</span><span>${p.frais_livraison > 0 ? EMarket.fmtFCFA(p.frais_livraison) : '<span style="color:var(--success-color);">GRATUITE</span>'}</span></div>
+                        <div class="summary-line total"><span>TOTAL</span><span>${EMarket.fmtFCFA(p.total)}</span></div>
+                        <button class="btn btn-lg btn-block" id="openCheckout" style="margin-top:20px;">🧾 Passer la commande</button>
+                        <button class="btn btn-secondary btn-block" id="emptyCart" style="margin-top:10px;">🗑️ Vider le panier</button>
+                    </div>`;
+
+                cont.innerHTML = `<div class="cart-items">${itemsHtml}</div>${summaryHtml}`;
+
+                cont.querySelectorAll('.qty-plus, .qty-minus').forEach(b => {
+                    b.addEventListener('click', async () => {
+                        const id = parseInt(b.dataset.id);
+                        const inp = cont.querySelector(`.cart-item input[data-id="${id}"]`);
+                        let q = parseInt(inp.value);
+                        if (b.classList.contains('qty-plus')) q++; else q = Math.max(1, q - 1);
+                        inp.value = q;
+                        await EMarket.request(`/panier/article/${id}`, { method: 'PUT', body: { quantite: q } });
+                        loadPanier();
+                    });
+                });
+                cont.querySelectorAll('.cart-item input[type=number]').forEach(inp => {
+                    inp.addEventListener('change', async () => {
+                        const id = parseInt(inp.dataset.id);
+                        const q = Math.max(1, parseInt(inp.value) || 1);
+                        await EMarket.request(`/panier/article/${id}`, { method: 'PUT', body: { quantite: q } });
+                        loadPanier();
+                    });
+                });
+                cont.querySelectorAll('.remove-btn').forEach(b => {
+                    b.addEventListener('click', async () => {
+                        await EMarket.request(`/panier/article/${b.dataset.id}`, { method: 'DELETE' });
+                        EMarket.refreshPanierCount();
+                        loadPanier();
+                    });
+                });
+                document.getElementById('openCheckout').addEventListener('click', openCheckout);
+                document.getElementById('emptyCart').addEventListener('click', async () => {
+                    if (!confirm('Vider tout le panier ?')) return;
+                    await EMarket.request('/panier/vider', { method: 'DELETE' });
+                    loadPanier(); EMarket.refreshPanierCount();
+                });
+            } catch (err) {
+                cont.innerHTML = `<div class="alert alert-error" style="grid-column:1/-1;">❌ ${err.message}</div>`;
+            }
+        }
+
+        function openCheckout() {
+            if (!_panier || !_panier.articles?.length) return;
+            const modal = document.getElementById('checkoutModal');
+            modal.classList.add('show');
+            document.querySelectorAll('.payment-method').forEach(m => {
+                m.addEventListener('click', () => {
+                    document.querySelectorAll('.payment-method').forEach(x => x.classList.remove('selected'));
+                    m.classList.add('selected');
+                    _methodePaiement = m.dataset.m;
+                });
+            });
+        }
+        document.getElementById('closeModal').addEventListener('click', () => document.getElementById('checkoutModal').classList.remove('show'));
+        document.getElementById('cancelCheckout').addEventListener('click', () => document.getElementById('checkoutModal').classList.remove('show'));
+        document.getElementById('checkoutModal').addEventListener('click', e => { if (e.target.id === 'checkoutModal') e.target.classList.remove('show'); });
+
+        document.getElementById('confirmCheckout').addEventListener('click', async () => {
+            const al = document.getElementById('checkoutAlert');
+            const addr = document.getElementById('addrLiv').value.trim();
+            const tel = document.getElementById('telLiv').value.trim();
+            if (!addr) { al.innerHTML = `<div class="alert alert-error">Adresse de livraison obligatoire</div>`; return; }
+            if (!tel)  { al.innerHTML = `<div class="alert alert-error">Téléphone obligatoire</div>`; return; }
+            try {
+                const ville = document.getElementById('villeLiv').value.trim() || 'Dakar';
+                const r = await EMarket.request('/commandes', {
+                    method: 'POST',
+                    body: {
+                        adresse_livraison: `${addr}${ville ? ' - ' + ville : ''}`,
+                        telephone_livraison: tel,
+                        methode_paiement: _methodePaiement,
+                        notes_client: document.getElementById('noteClient').value.trim()
+                    }
+                });
+                al.innerHTML = `<div class="alert alert-success">✅ ${r.message}</div>`;
+                EMarket.refreshPanierCount();
+                setTimeout(() => {
+                    window.location.href = `commandes.html?ref=${r.commande.numero_commande}`;
+                }, 1000);
+            } catch (err) {
+                al.innerHTML = `<div class="alert alert-error">❌ ${err.message}</div>`;
+            }
+        });
+
+        loadPanier();
+    </script>
+</body>
+</html>

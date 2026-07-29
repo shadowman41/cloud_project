@@ -1,0 +1,15 @@
+{
+  "name": "e-market",
+  "version": "1.0.0",
+  "description": "E-Market - Marketplace sénégalaise (Architecture AWS EC2 + RDS MySQL)",
+  "private": true,
+  "scripts": {
+    "install:all": "cd backend && npm install && cd ../database && npm install mysql2 dotenv 2>/dev/null || true",
+    "init:db": "node database/init-db.js",
+    "dev": "cd backend && npm run dev",
+    "start": "cd backend && npm start"
+  },
+  "keywords": ["ecommerce", "marketplace", "senegal", "aws", "rds", "ec2", "mysql"],
+  "author": "E-Market",
+  "license": "MIT"
+}

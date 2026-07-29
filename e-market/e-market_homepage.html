@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boutique - E-Market</title>
+    <meta name="description" content="Découvrez notre sélection de produits : technologies, alimentation, vêtements. Livraison rapide partout au Sénégal.">
+    <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+    <div class="top-bar">
+        <div class="container">🎉 Bienvenue sur E-Market ! Livraison gratuite dès 15 000 FCFA</div>
+    </div>
+
+    <header>
+        <div class="container">
+            <div class="main-nav">
+                <a href="index.html" class="logo">
+                    <img src="images/logo.jpeg" alt="E-Market Logo" onerror="this.parentElement.innerHTML='<span style=\'font-size:22px;font-weight:800;color:var(--primary-color);\'>🛒 E-MARKET</span>'">
+                </a>
+                <ul class="nav-links">
+                    <li><a href="index.html">Accueil</a></li>
+                    <li><a href="e-market_homepage.html" class="active">Boutique</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="index.html#apropos">À propos</a></li>
+                    <li><a href="index.html#contact">Contact</a></li>
+                </ul>
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Rechercher un produit..." value="">
+                    <button type="button" id="searchBtn">🔍</button>
+                </div>
+                <div class="nav-actions" id="navActions"></div>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-content-wrapper">
+        <aside class="sidebar">
+            <h3>Catégories</h3>
+            <ul id="sidebarCats">
+                <li style="padding:12px 20px;color:rgba(255,255,255,0.7);"><div class="loader" style="width:18px;height:18px;border-width:2px;"></div> Chargement…</li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <div class="breadcrumb" id="breadcrumb">
+                <a href="index.html">Accueil</a><span class="sep">›</span>
+                <span id="bcBoutique">Boutique</span>
+            </div>
+
+            <div class="div1" id="divTitre">
+                <h2>Tous nos produits</h2>
+            </div>
+
+            <div class="subcats-grid" id="subcatsGrid" style="display:none;"></div>
+
+            <div class="hero">
+                <div class="hero-text">
+                    <strong>⚡ Offres flash E-Market</strong>
+                    <small>Jusqu'à -45% sur une large sélection. Profitez-en vite !</small>
+                </div>
+                <a href="#" class="btn-promo" onclick="setFilter('est_promo','1')">Voir les promos</a>
+            </div>
+
+            <div class="products-topbar">
+                <div class="results-count" id="resultsCount">Recherche en cours…</div>
+                <div class="sort-group">
+                    Trier par
+                    <select id="sortSelect">
+                        <option value="populaire">Popularité</option>
+                        <option value="nouveau">Nouveautés</option>
+                        <option value="prix_asc">Prix croissant</option>
+                        <option value="prix_desc">Prix décroissant</option>
+                        <option value="note">Mieux notés</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="filters-bar" id="filtersBar">
+                <span style="font-size:13px;color:#555;">Filtres :</span>
+                <button class="filter-chip active" data-filtre="tous">Tous</button>
+                <button class="filter-chip" data-filtre="promo">⚡ Promo</button>
+                <button class="filter-chip" data-filtre="nouveau">✨ Nouveau</button>
+                <button class="filter-chip" data-filtre="-50000">💵 Moins de 50k</button>
+                <button class="filter-chip" data-filtre="50k-150k">💰 50k - 150k</button>
+                <button class="filter-chip" data-filtre="+150k">💎 Plus de 150k</button>
+                <button class="filter-chip" data-filtre="verif">✓ Vendeur vérifié</button>
+            </div>
+
+            <section class="products">
+                <div class="products-grid" id="productsGrid">
+                    <div class="loading-wrap" style="grid-column:1/-1;"><div class="loader loader-lg"></div><p style="margin-top:10px;color:#666;">Chargement des produits…</p></div>
+                </div>
+            </section>
+
+            <div class="pagination" id="pagination" data-container="productsGrid"></div>
+        </main>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h4>E-Market</h4>
+                    <p>Votre boutique en ligne de confiance pour tous vos achats au Sénégal.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Liens rapides</h4>
+                    <ul>
+                        <li><a href="index.html">Accueil</a></li>
+                        <li><a href="e-market_homepage.html">Boutique</a></li>
+                        <li><a href="services.html">Services</a></li>
+                        <li><a href="connexion.html">Compte</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Catégories</h4>
+                    <ul>
+                        <li><a href="e-market_homepage.html?categorie=technologies">Technologies</a></li>
+                        <li><a href="e-market_homepage.html?categorie=alimentations">Alimentations</a></li>
+                        <li><a href="e-market_homepage.html?categorie=vetements">Vêtements</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <ul>
+                        <li><a href="mailto:contact@e-market.sn">📧 contact@e-market.sn</a></li>
+                        <li><a href="tel:+221332346789">📞 +221 33 234 67 89</a></li>
+                        <li><a href="#">📍 Safco, Tivaouane Peuhl, Dakar</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">&copy; 2026 E-Market. Tous droits réservés. Fait avec ❤️ au Sénégal 🇸🇳</div>
+        </div>
+    </footer>
+
+    <script src="assets/app.js"></script>
+    <script>
+        const qsCategorie   = EMarket.qs('categorie');
+        const qsRecherche   = EMarket.qs('recherche');
+        const qsSousCat     = EMarket.qs('sous_categorie');
+        const qsPage        = parseInt(EMarket.qs('page') || '1');
+        let currentCategorie = null;
+        let currentFilters = { page: qsPage };
+
+        async function initCategorie() {
+            try {
+                const cats = await EMarket.request('/categories', { auth: false });
+                const sb = document.getElementById('sidebarCats');
+                sb.innerHTML = cats.map(c => `
+                    <li><a href="e-market_homepage.html?categorie=${c.slug}" class="${qsCategorie === c.slug ? 'active' : ''}">${c.icone || '📦'} ${c.nom}</a></li>
+                `).join('');
+
+                if (qsCategorie) {
+                    const [cat] = cats.filter(c => c.slug === qsCategorie);
+                    if (cat) {
+                        currentCategorie = cat;
+                        currentFilters.categorie = cat.slug;
+                        document.getElementById('bcBoutique').innerHTML = `<a href="e-market_homepage.html">Boutique</a><span class="sep">›</span> ${cat.nom}`;
+                        document.querySelector('#divTitre h2').textContent = `Rayon ${cat.nom}`;
+
+                        if (cat.sous_categories?.length) {
+                            const grid = document.getElementById('subcatsGrid');
+                            grid.style.display = '';
+                            grid.innerHTML = `
+                                <a href="#" class="subcat-btn ${!qsSousCat ? 'active' : ''}" data-sc="">
+                                    <span class="icon">${cat.icone || '📦'}</span>
+                                    <span>Tous</span>
+                                </a>
+                                ${cat.sous_categories.map(sc => `
+                                    <a href="#" class="subcat-btn ${qsSousCat === sc.slug ? 'active' : ''}" data-sc="${sc.slug}">
+                                        <span class="icon">${sc.icone || '•'}</span>
+                                        <span>${sc.nom}</span>
+                                    </a>
+                                `).join('')}
+                            `;
+                            grid.querySelectorAll('.subcat-btn').forEach(btn => {
+                                btn.addEventListener('click', e => {
+                                    e.preventDefault();
+                                    grid.querySelectorAll('.subcat-btn').forEach(b => b.classList.remove('active'));
+                                    btn.classList.add('active');
+                                    delete currentFilters.sous_categorie_id;
+                                    const sc = cat.sous_categories.find(x => x.slug === btn.dataset.sc);
+                                    if (sc) {
+                                        currentFilters.sous_categorie_id = sc.id;
+                                        const bc = document.getElementById('bcBoutique');
+                                        bc.innerHTML = `<a href="e-market_homepage.html">Boutique</a><span class="sep">›</span> <a href="e-market_homepage.html?categorie=${cat.slug}">${cat.nom}</a><span class="sep">›</span> ${sc.nom}`;
+                                    } else {
+                                        document.getElementById('bcBoutique').innerHTML = `<a href="e-market_homepage.html">Boutique</a><span class="sep">›</span> ${cat.nom}`;
+                                    }
+                                    currentFilters.page = 1;
+                                    loadProduits();
+                                });
+                            });
+                            if (qsSousCat) {
+                                const sc = cat.sous_categories.find(x => x.slug === qsSousCat);
+                                if (sc) currentFilters.sous_categorie_id = sc.id;
+                            }
+                        }
+                    }
+                }
+            } catch (_) {}
+        }
+
+        function setFilter(key, val) {
+            if (key === 'est_promo') currentFilters.est_promo = '1';
+            const qs = new URLSearchParams(currentFilters).toString();
+            loadProduits();
+        }
+
+        document.querySelectorAll('.filter-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+                const f = chip.dataset.filtre;
+                delete currentFilters.est_promo;
+                delete currentFilters.est_nouveau;
+                delete currentFilters.prix_max;
+                delete currentFilters.prix_min;
+                delete currentFilters.vendeur_verifie;
+                switch (f) {
+                    case 'promo':   currentFilters.est_promo = '1'; break;
+                    case 'nouveau': currentFilters.est_nouveau = '1'; break;
+                    case '-50000':  currentFilters.prix_max = 50000; break;
+                    case '50k-150k':currentFilters.prix_min = 50000; currentFilters.prix_max = 150000; break;
+                    case '+150k':   currentFilters.prix_min = 150000; break;
+                    case 'verif':   currentFilters.vendeur_verifie = '1'; break;
+                }
+                currentFilters.page = 1;
+                loadProduits();
+            });
+        });
+
+        document.getElementById('sortSelect').addEventListener('change', e => {
+            currentFilters.tri = e.target.value;
+            loadProduits();
+        });
+
+        async function loadProduits() {
+            const box = document.getElementById('productsGrid');
+            box.innerHTML = `<div class="loading-wrap" style="grid-column:1/-1;"><div class="loader loader-lg"></div><p style="margin-top:10px;color:#666;">Chargement des produits…</p></div>`;
+            const params = { limit: 12, ...currentFilters };
+            if (qsRecherche) params.recherche = qsRecherche;
+            try {
+                const qs = new URLSearchParams(params).toString();
+                const data = await EMarket.request(`/produits${qs ? '?' + qs : ''}`, { auth: false });
+                const count = document.getElementById('resultsCount');
+                count.innerHTML = `<strong>${data.pagination.total}</strong> produits trouvés${qsRecherche ? ` pour "<strong>${qsRecherche}</strong>"` : ''}`;
+                if (!data.produits?.length) {
+                    box.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="icon">📦</div><h3>Aucun produit trouvé</h3><p>Essayez d'autres filtres ou mots-clés</p><a href="e-market_homepage.html" class="btn" style="margin-top:14px;">Réinitialiser les filtres</a></div>`;
+                    document.getElementById('pagination').innerHTML = '';
+                    return;
+                }
+                box.innerHTML = data.produits.map(p => EMarket.productCard(p)).join('');
+                EMarket.attachProductEvents(box);
+                EMarket.renderPagination('pagination', data.pagination, { ...params, page: data.pagination.page });
+                window.scrollTo({ top: 300, behavior: 'smooth' });
+            } catch (err) {
+                box.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="icon">⚠️</div><h3>Erreur chargement</h3><p>${err.message}</p><p style="color:#888;margin-top:10px;font-size:13px;">Assurez-vous que le backend tourne (npm start dans le dossier backend)</p></div>`;
+            }
+        }
+
+        (async () => {
+            if (qsRecherche) document.getElementById('searchInput').value = qsRecherche;
+            await initCategorie();
+            loadProduits();
+        })();
+    </script>
+</body>
+</html>

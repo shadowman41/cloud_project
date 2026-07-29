@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Market - Votre Marketplace au Sénégal</title>
+    <meta name="description" content="E-Market : la marketplace n°1 au Sénégal. Achetez en ligne vos produits tech, alimentation et vêtements. Livraison partout au Sénégal.">
+    <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+    <div class="top-bar">
+        <div class="container">
+            🎉 Bienvenue sur E-Market ! Livraison gratuite dès 15 000 FCFA à Dakar
+        </div>
+    </div>
+
+    <header>
+        <div class="container">
+            <div class="main-nav">
+                <a href="index.html" class="logo">
+                    <img src="images/logo.jpeg" alt="E-Market Logo" onerror="this.parentElement.innerHTML='<span style=\'font-size:24px;font-weight:800;color:var(--primary-color);\'>🛒 E-MARKET</span>'">
+                </a>
+                <ul class="nav-links">
+                    <li><a href="index.html" class="active">Accueil</a></li>
+                    <li><a href="e-market_homepage.html">Boutique</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="#apropos">À propos</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Rechercher un produit, une marque...">
+                    <button type="button" id="searchBtn">🔍</button>
+                </div>
+                <div class="nav-actions" id="navActions"></div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="banner container" style="margin-top:30px;">
+            <div class="banner-text">
+                <h1>Bienvenue sur E-Market 🇸🇳</h1>
+                <p>La marketplace où trouver tout ce dont vous avez besoin. Technologies, alimentation fraîche, mode et plus encore.</p>
+                <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                    <a href="e-market_homepage.html" class="btn btn-lg">Commander maintenant →</a>
+                    <a href="#categories" class="btn btn-secondary btn-lg">Nos catégories</a>
+                </div>
+            </div>
+            <div class="banner-image">
+                <img src="images/ordinateurs.jpg" alt="Shopping en ligne" style="width:100%;height:100%;object-fit:cover;border-radius:10px;opacity:0.95;" onerror="this.style.display='none';this.parentElement.innerHTML='🛒📱👕'">
+            </div>
+        </section>
+
+        <section class="container" id="categories">
+            <div class="section-title" style="margin-top:40px;">
+                <h2>🛍️ Catégories populaires</h2>
+                <a href="e-market_homepage.html">Voir tout →</a>
+            </div>
+            <div class="categories-grid" id="categoriesGrid">
+                <div class="loading-wrap" style="grid-column:1/-1;"><div class="loader loader-lg"></div></div>
+            </div>
+        </section>
+
+        <section class="container" style="margin-top:50px;">
+            <div class="row" style="gap:24px;">
+                <div class="col-4" style="padding:24px;background:var(--primary-light);border-radius:var(--radius-md);text-align:center;">
+                    <div style="font-size:40px;margin-bottom:10px;">🚚</div>
+                    <h3 style="color:var(--primary-color);margin-bottom:6px;">Livraison rapide</h3>
+                    <p style="color:#555;">Livraison à Dakar en 24h et dans tout le Sénégal en 48-72h</p>
+                </div>
+                <div class="col-4" style="padding:24px;background:var(--primary-light);border-radius:var(--radius-md);text-align:center;">
+                    <div style="font-size:40px;margin-bottom:10px;">💸</div>
+                    <h3 style="color:var(--primary-color);margin-bottom:6px;">Paiement sécurisé</h3>
+                    <p style="color:#555;">Orange Money, Wave, carte bancaire ou paiement à la livraison</p>
+                </div>
+                <div class="col-4" style="padding:24px;background:var(--primary-light);border-radius:var(--radius-md);text-align:center;">
+                    <div style="font-size:40px;margin-bottom:10px;">✅</div>
+                    <h3 style="color:var(--primary-color);margin-bottom:6px;">Garantie satisfait</h3>
+                    <p style="color:#555;">Vendeurs vérifiés, produits authentiques, retours sous 7 jours</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="container" style="margin-top:50px;">
+            <div class="section-title">
+                <h2>🔥 Offres du moment - Jusqu'à -45%</h2>
+                <a href="e-market_homepage.html?est_promo=1">Voir toutes les promos →</a>
+            </div>
+            <div class="products">
+                <div class="products-grid" id="promoGrid">
+                    <div class="loading-wrap" style="grid-column:1/-1;"><div class="loader loader-lg"></div></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="container" style="margin-top:50px;">
+            <div class="section-title">
+                <h2>✨ Nouveautés Tech</h2>
+                <a href="e-market_homepage.html?categorie=technologies">Voir la catégorie →</a>
+            </div>
+            <div class="products">
+                <div class="products-grid" id="nouveauxGrid">
+                    <div class="loading-wrap" style="grid-column:1/-1;"><div class="loader loader-lg"></div></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="apropos" class="banner container" style="margin-top:50px;">
+            <div class="banner-text">
+                <h2>E-Market, c'est quoi ?</h2>
+                <p style="max-width:600px;margin-top:10px;line-height:1.7;">E-Market est une marketplace sénégalaise qui connecte des vendeurs locaux vérifiés avec des clients partout dans le pays. Nous croyons en un commerce numérique inclusif, sécurisé et accessible à tous. Avec E-Market, achetez sereinement et soutenez l'économie locale.</p>
+            </div>
+            <div class="banner-image" style="background:rgba(255,255,255,0.08);">
+                🇸🇳🤝🛍️
+            </div>
+        </section>
+    </main>
+
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h4>E-Market</h4>
+                    <p>Votre boutique en ligne de confiance au Sénégal. Technologie, alimentation, mode, trouvez tout en quelques clics.</p>
+                    <div class="payment-icons">💳 🧡 💚 📱</div>
+                </div>
+                <div class="footer-section">
+                    <h4>Liens rapides</h4>
+                    <ul>
+                        <li><a href="index.html">Accueil</a></li>
+                        <li><a href="e-market_homepage.html">Boutique</a></li>
+                        <li><a href="services.html">Services</a></li>
+                        <li><a href="connexion.html">Mon compte</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Catégories</h4>
+                    <ul>
+                        <li><a href="e-market_homepage.html?categorie=technologies">Technologies</a></li>
+                        <li><a href="e-market_homepage.html?categorie=alimentations">Alimentations</a></li>
+                        <li><a href="e-market_homepage.html?categorie=vetements">Vêtements</a></li>
+                        <li><a href="e-market_homepage.html">Tous les produits</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <ul>
+                        <li><a href="mailto:contact@e-market.sn">📧 contact@e-market.sn</a></li>
+                        <li><a href="tel:+221332346789">📞 +221 33 234 67 89</a></li>
+                        <li><a href="#">📍 Safco, Tivaouane Peuhl, Dakar, SN</a></li>
+                        <li><a href="#">🕐 Lun - Sam : 8h - 20h</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">&copy; 2026 E-Market. Tous droits réservés. Fait avec ❤️ au Sénégal 🇸🇳</div>
+        </div>
+    </footer>
+
+    <script src="assets/app.js"></script>
+    <script>
+        (async () => {
+            try {
+                const cats = await EMarket.request('/categories', { auth: false });
+                const cg = document.getElementById('categoriesGrid');
+                cg.innerHTML = cats.map(c => {
+                    const img = c.image_url ? `images/${c.image_url.split('/').pop()}` : 'images/Electro.webp';
+                    return `
+                        <a class="category-card" href="e-market_homepage.html?categorie=${c.slug}">
+                            <img src="${img}" alt="${c.nom}" onerror="this.style.display='none';this.parentElement.insertAdjacentHTML('afterbegin','<div class=\\'icon\\'>${c.icone || '📦'}</div>');">
+                            <h3>${c.nom}</h3>
+                            <p>${c.nb_produits || 0} produits</p>
+                        </a>
+                    `;
+                }).join('');
+            } catch (_) {}
+
+            EMarket.loadProduits({ est_promo: 1, tri: 'populaire', limit: 8 }, 'promoGrid');
+            EMarket.loadProduits({ categorie: 'technologies', est_nouveau: 1, tri: 'nouveau', limit: 8 }, 'nouveauxGrid');
+        })();
+    </script>
+</body>
+</html>
