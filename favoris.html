@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes favoris - E-Market</title>
+    <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+    <div class="top-bar"><div class="container">🎉 Bienvenue sur E-Market ! Livraison gratuite dès 15 000 FCFA</div></div>
+    <header>
+        <div class="container">
+            <div class="main-nav">
+                <a href="index.html" class="logo"><img src="images/logo.jpeg" alt="E-Market" onerror="this.parentElement.innerHTML='<span style=\'font-size:24px;font-weight:800;color:var(--primary-color);\'>🛒 E-MARKET</span>'"></a>
+                <ul class="nav-links"><li><a href="index.html">Accueil</a></li><li><a href="e-market_homepage.html">Boutique</a></li><li><a href="services.html">Services</a></li></ul>
+                <div class="search-container" style="max-width:260px;"><input type="text" id="searchInput" placeholder="Rechercher..."><button type="button" id="searchBtn">🔍</button></div>
+                <div class="nav-actions" id="navActions"></div>
+            </div>
+        </div>
+    </header>
+    <main class="container" style="margin-top:30px;">
+        <div class="breadcrumb"><a href="index.html">Accueil</a><span class="sep">›</span> <a href="profil.html">Mon compte</a><span class="sep">›</span> Mes favoris</div>
+        <div class="div1"><h1>❤️ Mes favoris</h1></div>
+        <div id="favContainer">
+            <div class="loading-wrap"><div class="loader loader-lg"></div><p style="margin-top:10px;color:#666;">Chargement des favoris…</p></div>
+        </div>
+    </main>
+    <footer><div class="container"><div class="copyright">&copy; 2026 E-Market. Tous droits réservés. Fait avec ❤️ au Sénégal 🇸🇳</div></div></footer>
+    <script src="assets/app.js"></script>
+    <script>
+        async function loadFav() {
+            const cont = document.getElementById('favContainer');
+            try {
+                if (!EMarket.user) {
+                    cont.innerHTML = `<div class="alert alert-info">🔒 <a href="connexion.html" style="color:var(--primary-color);font-weight:600;">Connectez-vous</a> pour retrouver vos favoris.</div>`;
+                    return;
+                }
+                const favs = await EMarket.request('/produits/favoris');
+                if (!favs?.length) {
+                    cont.innerHTML = `<div class="empty-state"><div class="icon">❤️</div><h3>Vous n'avez aucun favori</h3>
+                    <p>Ajoutez des produits à vos favoris en cliquant sur le cœur dans la fiche produit.</p><br>
+                    <a href="e-market_homepage.html" class="btn btn-lg">Découvrir les produits</a></div>`;
+                    return;
+                }
+                cont.innerHTML = `<section class="products"><div class="products-grid" id="favGrid">${favs.map(p => EMarket.productCard(p)).join('')}</div></section>`;
+                EMarket.attachProductEvents(document.getElementById('favGrid'));
+            } catch (err) {
+                cont.innerHTML = `<div class="alert alert-error">❌ ${err.message}</div>`;
+            }
+        }
+        loadFav();
+    </script>
+</body>
+</html>
