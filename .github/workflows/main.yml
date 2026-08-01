@@ -1,0 +1,35 @@
+name: Deploy PHP Website to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ vars.EC2_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Copy files
+        run: |
+          scp -i ~/.ssh/id_rsa -r ./* \
+          ${{ vars.EC2_USER }}@${{ vars.EC2_HOST }}:/home/${{ vars.EC2_USER }}/GROUPE3
+
+      - name: Deploy
+        run: |
+          ssh -i ~/.ssh/id_rsa ${{ vars.EC2_USER }}@${{ vars.EC2_HOST }} << EOF
+            sudo rm -rf /var/www/html/*
+            sudo cp -r /home/${{ vars.EC2_USER }}/GROUPE3/* /var/www/html/
+            sudo chown -R apache:apache /var/www/html
+            sudo chmod -R 755 /var/www/html
+            sudo systemctl restart httpd
+          EOF
