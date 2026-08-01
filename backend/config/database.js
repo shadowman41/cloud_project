@@ -6,7 +6,7 @@ const pool = mysql.createPool({
   port:     parseInt(process.env.DB_PORT || '3306'),
   user:     process.env.DB_USER || 'admin',
   password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'emarket',
+  database: process.env.DB_NAME || 'emarket_db',
   waitForConnections: true,
   connectionLimit: 20,
   queueLimit: 0,
