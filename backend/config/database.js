@@ -2,11 +2,11 @@ require('dotenv').config();
 const mysql = require('mysql2/promise');
 
 const pool = mysql.createPool({
-  host:     process.env.DB_HOST || 'localhost',
+  host:     process.env.DB_HOST || 'projet-finops-db.c4jwiiu8emil.us-east-1.rds.amazonaws.com',
   port:     parseInt(process.env.DB_PORT || '3306'),
-  user:     process.env.DB_USER || 'root',
+  user:     process.env.DB_USER || 'admin',
   password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'emarket_db',
+  database: process.env.DB_NAME || 'emarket',
   waitForConnections: true,
   connectionLimit: 20,
   queueLimit: 0,
