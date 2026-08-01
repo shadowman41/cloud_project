@@ -4,10 +4,10 @@ const fs = require('fs');
 const path = require('path');
 
 const dbConfig = {
-  host:     process.env.DB_HOST || 'localhost',
+  host:     process.env.DB_HOST || 'projet-finops-db.c4jwiiu8emil.us-east-1.rds.amazonaws.com',
   port:     parseInt(process.env.DB_PORT || '3306'),
-  user:     process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
+  user:     process.env.DB_USER || 'admin',
+  password: process.env.DB_PASSWORD || 'Shadowman#41',
   multipleStatements: true,
   waitForConnections: true,
   connectionLimit: 10
